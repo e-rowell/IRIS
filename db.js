@@ -64,6 +64,98 @@ module.exports = () => {
         });
     };
 
+
+    const createIncident = (user_id, incident_name, desc, cat_id, latitude, longitude,
+                            start_date, end_date, frequency, keywords, custom_fields,
+                            callback) => {
+        pool.connect((err, client, done) => {
+            done(); // release back to pool
+
+            if (err) {
+                callback(err);
+            } else {
+                client.query('SELECT create_incident($1:: int, $2:: text, $3::text, $4::int,' +
+                    ' $5::numeric, $6::numeric, $7::date, $8::date, $9::interval, $10::text[],' +
+                    ' $11::json);',
+                    [user_id, incident_name, desc, cat_id, latitude, longitude,
+                        start_date, end_date, frequency, keywords, custom_fields],
+                    (err, result) => {
+                        callback(err, result);
+                    }
+                );
+            }
+        });
+    };
+
+    const getIncident = (incident_id, callback) => {
+        pool.connect((err, client, done) => {
+            done(); // release back to pool
+
+            if (err) {
+                callback(err);
+            } else {
+                client.query('SELECT * FROM public.incident WHERE incident_id = $1::int;',
+                    [incident_id],
+                    (err, result) => {
+                        callback(err, result);
+                    }
+                );
+            }
+        });
+    };
+
+    const getUserIncidents = (user_id, callback) => {
+        pool.connect((err, client, done) => {
+            done(); // release back to pool
+
+            if (err) {
+                callback(err);
+            } else {
+                client.query('SELECT * FROM public.incident WHERE user_id = $1::int;',
+                    [user_id],
+                    (err, result) => {
+                        callback(err, result);
+                    }
+                );
+            }
+        });
+    };
+
+    const getAllIncidents = (filters, callback) => {
+        pool.connect((err, client, done) => {
+            done(); // release back to pool
+
+            if (err) {
+                callback(err);
+            } else {
+                let params = [];
+                let query = 'SELECT * FROM public.incident ';
+                if (filters) {
+                    if (filters.limit) {
+                        query += 'LIMIT $1';
+                        params.push(filters.limit);
+                    }
+                    if (filters.offset)  {
+                        query += 'OFFSET $' + (filters.limit) ? '2' : '1';
+                        params.push(filters.offset);
+                    }
+                }
+
+                query += 'ORDER BY start_date ASC;';
+                // if (filters) query += 'WHERE ';
+                // if (filters.start_before) query += '';
+                // if (filters.start_after) query += '';
+
+                client.query(query, params,
+                    (err, result) => {
+                        callback(err, result);
+                    }
+                );
+            }
+        });
+    };
+
+
     pool.on('error', function (err, client) {
         // if an error is encountered by a client while it sits idle in the pool
         // the pool itself will emit an error event with both the error and
@@ -78,7 +170,13 @@ module.exports = () => {
     return {
         createUser    : createUser,
         getUserByEmail: getUserByEmail,
-        getUserById   : getUserById
+        getUserById   : getUserById,
+
+        createIncident  : createIncident,
+        getIncident     : getIncident,
+        getUserIncidents: getUserIncidents,
+        getAllIncidents : getAllIncidents
+
     }
 
 };

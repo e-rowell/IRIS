@@ -178,6 +178,9 @@ module.exports = (passport) => {
         }
     };
 
+    const jwtAuth = (req, res, next) => {
+        return passport.authenticate('jwt', { session: false })(req, res, next);
+    };
 
 // route middleware to make sure the user is logged in
     const isLoggedIn = (req, res, next) => {
@@ -193,10 +196,6 @@ module.exports = (passport) => {
         res.json({ "message": "logged in" });
     };
 
-    const termsAndConditions = (req, res) => {
-        res.sendFile('client/terms_conditions_privacy.html', { root: __dirname });
-    };
-
     const logout = (req, res) => {
         req.logout();
         res.redirect('/');
@@ -207,6 +206,7 @@ module.exports = (passport) => {
         loginGoogle          : loginGoogle,
         loginGoogleCallback  : loginGoogleCallback,
         isLoggedIn           : isLoggedIn,
+        jwtAuth              : jwtAuth,
         logout               : logout,
         home                 : home,
         loginGoogleSuccess   : loginGoogleSuccess,
@@ -218,8 +218,7 @@ module.exports = (passport) => {
         loginTwitter         : loginTwitter,
         loginTwitterCallback : loginTwitterCallback,
         loginTwitterSuccess  : loginTwitterSuccess,
-        loginTwitterFailure  : loginTwitterFailure,
-        termsAndConditions   : termsAndConditions
+        loginTwitterFailure  : loginTwitterFailure
     }
 
 }

@@ -1,12 +1,10 @@
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
-const TwitterTokenStrategy = require('passport-twitter-token');
 
 const passportJwt = require('passport-jwt');
 const extractJwt = passportJwt.ExtractJwt;
 const JwtStrategy = passportJwt.Strategy;
-
 
 const config = require('../config');
 const https = require('https');
@@ -17,8 +15,7 @@ const jwt = require('jsonwebtoken');
 module.exports = (passport) => {
     'use strict';
 
-    let user = {};
-
+    //let user = {};
 
 
     passport.serializeUser((user, done) => {
@@ -37,7 +34,7 @@ module.exports = (passport) => {
             }
 
             if (decoded) {
-                done(null, decoded);
+                done(null, user);
             } else {
                 done(null, false);
             }
@@ -47,19 +44,21 @@ module.exports = (passport) => {
 
     passport.use(new JwtStrategy({
         secretOrKey   : config.jwt.secret,
-        jwtFromRequest: extractJwt.fromAuthHeader(),
+        jwtFromRequest: extractJwt.fromAuthHeaderWithScheme(config.jwt.authScheme),
         authScheme    : config.jwt.authScheme,
         issuer        : config.jwt.issuer,
         audience      : config.jwt.audience
     }, (payload, done) => {
 
+        return done(null, payload);
+
         // find user information
-        let user = {};
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(new Error('User not found'), null);
-        }
+        // let user = {};
+        // if (user) {
+        //     return done(null, user);
+        // } else {
+        //     return done(null, false);
+        // }
     }));
 
 
@@ -79,27 +78,17 @@ module.exports = (passport) => {
         passReqToCallback: true
     }, verifyCallback));
 
-    passport.use(new TwitterTokenStrategy({
-        consumerKey: config.oauth.twitter.consumer_key,
-        consumerSecret: config.oauth.twitter.consumer_key,
-        callbackURL: config.oauth.twitter.callback_url,
-        passReqToCallback: true,
-    }, (token, tokenSecret, profile, done) => {
-        console.log('in here');
-        done(null, { user: 'user' });
-    }));
 
     passport.use(new TwitterStrategy({
-        consumerKey: config.oauth.twitter.consumer_key,
-        consumerSecret: config.oauth.twitter.consumer_key,
-        callbackURL: config.oauth.twitter.callback_url,
+        consumerKey: 'v7COLKOEyUzLwBn00MWovdJwh',
+        consumerSecret: 'cH5RVrSYkYx40fKFkJdHNFOLr3UHQLX76ZhzOxI5XMZ4wIc8Z0',
+        callbackURL: 'http://127.0.0.1:8082/auth/twitter/callback',
+        // consumerKey   : config.oauth.twitter.consumer_key,
+        // consumerSecret: config.oauth.twitter.consumer_key,
+        // callbackURL   : config.oauth.twitter.callback_url,
         passReqToCallback: true,
-        userProfileURL  : 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
-    }, (req, token, tokenSecret, profile, done) => {
-        console.log('in here');
-        done(null, { user: 'user' });
-    }));
-
+        userProfileURL: "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
+    }, verifyCallback));
 
 
     function verifyCallback(req, access_token, refresh_token, profile, done) {
@@ -144,7 +133,7 @@ module.exports = (passport) => {
             email   : email,
             name    : name
         }, config.jwt.secret, {
-            expiresIn: 60 * 20 // 20 minutes
+            expiresIn: 60 * 20 * 100 * 100 // 20 minutes
         });
 
         let refresh_token = jwt.sign({
