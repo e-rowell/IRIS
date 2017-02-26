@@ -1,6 +1,6 @@
 const config = require("../config");
 
-const db = require('../db')();
+const db = require('../db/db');
 
 module.exports = (passport) => {
     'use strict';
@@ -10,10 +10,10 @@ module.exports = (passport) => {
         console.log(req.body);
 
         if (!req.body.source_id || !req.body.email || !req.body.default_lat || !req.body.default_long) {
-            return res.status(400).json({ error: 'Missing parameters.' });
+            return res.status(422).json({ error: 'Missing parameters.' });
         }
 
-        db.createUser(req.body.source_id, req.body.email, req.body.default_lat, req.body.default_long,
+        db.user.createUser(req.body.source_id, req.body.email, req.body.default_lat, req.body.default_long,
             (err, result) => {
 
                 if (err) {
@@ -31,7 +31,7 @@ module.exports = (passport) => {
 
         passport.authenticate('jwt', (req, res) => {
             if (req.params.id) {
-                db.getUserById(req.params.id, (err, result) => {
+                db.user.getUserById(req.params.id, (err, result) => {
                     if (err) {
                         throw err;
                     } else if (result.length > 0) {
@@ -41,7 +41,7 @@ module.exports = (passport) => {
                     }
                 });
             } else {
-                return res.status(400).json({ error: 'Invalid parameters.' })
+                return res.status(422).json({ error: 'Invalid parameters.' })
             }
         })(req, res);
     };

@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 // Postgres config
 const pg = require('pg');
 
-const db = require('../db')();
-
+const db = require('../db/db');
 
 module.exports = (passport) => {
     'use strict';
@@ -23,10 +22,9 @@ module.exports = (passport) => {
     const loginGoogle = (req, res) => {
         req.session.user = {};
 
-        if (req.query.lat && req.query.long) {
+        if (req.query.location) {
 
-            req.session.user.lat = req.query.lat;
-            req.session.user.long = req.query.long;
+            req.session.user.location = req.query.location;
 
             return passport.authenticate('google', {
                 // scope     : ['https://www.googleapis.com/auth/userinfo.profile'
@@ -36,7 +34,7 @@ module.exports = (passport) => {
 
             })(req, res);
         } else {
-            res.status(400).json({ error: 'Missing required parameters.' });
+            res.status(422).json({ error: 'Missing required parameters.' });
             res.end();
         }
     };
@@ -84,7 +82,7 @@ module.exports = (passport) => {
                 approvalPrompt: 'force'
             })(req, res);
         } else {
-            res.status(400).json({ error: 'Missing required parameters.' });
+            res.status(422).json({ error: 'Missing required parameters.' });
             res.end();
         }
     };
@@ -128,7 +126,7 @@ module.exports = (passport) => {
 
             return passport.authenticate('twitter')(req, res, next);
         } else {
-            res.status(400).json({ error: 'Missing required parameters.' });
+            res.status(422).json({ error: 'Missing required parameters.' });
             res.end();
         }
     };
@@ -160,7 +158,7 @@ module.exports = (passport) => {
         if (req.query.refresh_token) {
             jwt.verify(req.query.refresh_token, config.jwt.secret, (err, decoded) => {
                 if (err) {
-                    return res.status(400).json({ error: 'Invalid refresh token.' });
+                    return res.status(422).json({ error: 'Invalid refresh token.' });
                 } else {
                     let token = jwt.sign({
                         sub     : decoded.sub,
@@ -174,7 +172,7 @@ module.exports = (passport) => {
                 }
             });
         } else {
-            return res.status(400).json({ error: 'No refresh token provided.' });
+            return res.status(422).json({ error: 'No refresh token provided.' });
         }
     };
 

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 // Postgres config
 const pg = require('pg');
 
-const db = require('../db')();
+const db = require('../db/db');
 
 
 module.exports = (passport) => {
@@ -13,14 +13,26 @@ module.exports = (passport) => {
 
     // POST /api/incidents
     const createIncident = (req, res, next) => {
-        let body = req.body;
-        if (!body.user_id || !body.name || !body.desc || !body.cat_id || !body.lat || !body.long || !body.start || !body.end || !body.freq || !body.keywords) {
-            return res.status(400).json({ error: 'Missing required parameters.' });
-            //return res.status(400).json(body);
+
+        // TODO: user_id should be pulled from JWT
+        if (!req.body.user_id || !req.body.title || !req.body.desc || !req.body.cat_id ||
+            !req.body.location || !req.body.start_date || !req.body.end_date || !req.body.freq ||
+            !req.body.keywords) {
+            return res.status(422).json({ error: 'Missing required parameters.' });
         }
 
-        db.createIncident(body.user_id, body.name, body.desc, body.cat_id,
-            body.lat, body.long, body.start, body.end, body.freq, body.keywords, body.custom_fields,
+        // ensure parameters meet the json format
+        if (!req.body.user_id  || !req.body.cat_id || !db.validField(req.body.title) ||
+            !db.validField(req.body.desc) || !db.validField(req.body.location) ||
+            !db.validField(req.body.start_date) || !db.validField(req.body.end_date) ||
+            !db.validField(req.body.freq) || !db.validField(req.body.keywords)) {
+            return res.status(422).json({ error: 'The parameters are not structured correctly.' });
+        }
+
+
+        db.incident.createIncident(req.body.user_id, req.body.title, req.body.desc, req.body.cat_id,
+            req.body.location, req.body.start_date, req.body.end_date, req.body.freq, req.body.keywords,
+            req.body.custom_fields,
             (err, result) => {
                 if (err) {
                     return res.status(500).json({
@@ -28,7 +40,7 @@ module.exports = (passport) => {
                     });
                 }
 
-                res.status(201).json({ location: '/api/incident/' + result.rows[0]['create_incident'] });
+                res.status(201).json({ location: '/api/incidents/' + result.rows[0]['create_incident'] });
             });
     };
 
@@ -38,16 +50,16 @@ module.exports = (passport) => {
             next();
             return;
         }
-        db.getIncident(req.params.id, (err, result) => {
+        db.incident.getIncident(req.params.id, (err, result) => {
             if (err) {
                 return res.status(500).json({
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json({ incident: result.rows[0] });
+                return res.status(200).json(result.rows[0]);
             } else {
-                return res.status(404).json({ error: 'No record found with that ID.' });
+                return res.status(404).json({ message: 'Nothing found.' });
             }
         })
     };
@@ -55,18 +67,18 @@ module.exports = (passport) => {
     // GET /api/:user_id/incidents
     const getUserIncidents = (req, res, next) => {
         if (!req.params.id) {
-            return res.status(400).json({ error: 'Missing required parameters.' });
+            return res.status(422).json({ error: 'Missing required parameters.' });
         }
-        db.getUserIncidents(req.params.id, (err, result) => {
+        db.incident.getUserIncidents(req.params.id, (err, result) => {
             if (err) {
                 return res.status(500).json({
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json({ incidents: result.rows });
+                return res.status(200).json(result.rows);
             } else {
-                return res.status(404).json({ error: 'No record found with that ID.' });
+                return res.status(404).json({ message: 'Nothing found.' });
             }
         });
 
@@ -75,19 +87,18 @@ module.exports = (passport) => {
     // GET /api/incidents
     const getAllIncidents = (req, res, next) => {
 
-        db.getAllIncidents({ limit: req.query.limit, offset: req.query.offset }, (err, result) => {
+        db.incident.getAllIncidents({ limit: req.query.limit, offset: req.query.offset }, (err, result) => {
             if (err) {
                 return res.status(500).json({
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json({ incidents: result.rows });
+                return res.status(200).json(result.rows);
             } else {
-                return res.status(404).json({ error: 'No records found.' });
+                return res.status(404).json({ message: 'Nothing found.' });
             }
         });
-
     };
 
 

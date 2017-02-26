@@ -8,7 +8,7 @@ const JwtStrategy = passportJwt.Strategy;
 
 const config = require('../config');
 const https = require('https');
-const db = require('../db')();
+const db = require('../db/db');
 const jwt = require('jsonwebtoken');
 
 
@@ -95,7 +95,7 @@ module.exports = (passport) => {
         process.nextTick(() => {
             // verify token
 
-            db.getUserByEmail(profile.emails[0].value, (err, result) => {
+            db.user.getUserByEmail(profile.emails[0].value, (err, result) => {
                 if (err) {
                     throw err;
                 }
@@ -107,8 +107,8 @@ module.exports = (passport) => {
                     return done(null, tokens);
                 } else {
 
-                    db.createUser(profile.provider, profile.emails[0].value,
-                        req.session.user.lat, req.session.user.long, (err, result) => {
+                    db.user.createUser(profile.provider, profile.emails[0].value,
+                        req.session.user.location, (err, result) => {
                             if (err) {
                                 if (err.code == "23505") { // duplicate entry
 
