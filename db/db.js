@@ -19,6 +19,7 @@ module.exports = {
     incident: require('./incident'),
     report  : require('./report'),
     user    : require('./user'),
+    category: require('./category'),
 
     validField: (json) => {
         return (json.id && json.title && json.data && json.type); // && json.mandatory);

@@ -8,6 +8,7 @@ module.exports = (passport) => {
     const loginCtrl = require('./controllers/login.controller')(passport);
     const incidentCtrl = require('./controllers/incident.controller')(passport);
     const reportCtrl = require('./controllers/report.controller')(passport);
+    const categoryCtrl = require('./controllers/category.controller')(passport);
 
     router.route('/api/users').post(userCtrl.createUser);
     router.route('/api/users/id:').get(userCtrl.getUser);
@@ -30,17 +31,21 @@ module.exports = (passport) => {
     router.route('/auth/twitter/failure').get(loginCtrl.loginTwitterFailure);
 
 
-    router.route('/api/incidents').post(incidentCtrl.createIncident);
+    router.route('/api/incidents').post(passport.authenticate('jwt', { session: false }), incidentCtrl.createIncident);
     router.route('/api/incidents').get(incidentCtrl.getAllIncidents);
     router.route('/api/incidents/:id').get(incidentCtrl.getIncident);
     router.route('/api/users/:id/incidents').get(incidentCtrl.getUserIncidents);
 
 
-    router.route('/api/incidents/:incident_id/reports').post(reportCtrl.createReport);
+    router.route('/api/incidents/:incident_id/reports').post(passport.authenticate('jwt', { session: false }), reportCtrl.createReport);
     router.route('/api/incidents/:report_id').get(reportCtrl.getReport);
     router.route('/api/incidents/:incident_id/reports/:report_id').get(reportCtrl.getReportFromIncident);
     router.route('/api/users/:id/incidents/:incident_id/reports').get(reportCtrl.getUserReportsForIncident);
     router.route('/api/incidents/:incident_id/reports').get(reportCtrl.getAllReportsForIncident);
+
+    router.route('/api/categories').post(categoryCtrl.createCategory);
+    router.route('/api/categories').get(categoryCtrl.getCategories);
+    router.route('/api/categories/:cat_id').get(categoryCtrl.getCategories);
 
 
     router.route('/logout').get(loginCtrl.logout);

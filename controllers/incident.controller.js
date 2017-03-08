@@ -29,7 +29,6 @@ module.exports = (passport) => {
             return res.status(422).json({ error: 'The parameters are not structured correctly.' });
         }
 
-
         db.incident.createIncident(req.body.user_id, req.body.title, req.body.desc, req.body.cat_id,
             req.body.location, req.body.start_date, req.body.end_date, req.body.freq, req.body.keywords,
             req.body.custom_fields,
@@ -81,7 +80,6 @@ module.exports = (passport) => {
                 return res.status(404).json({ message: 'Nothing found.' });
             }
         });
-
     };
 
     // GET /api/incidents
@@ -101,7 +99,12 @@ module.exports = (passport) => {
         });
     };
 
+    // POST /api/incidents/:incident_id
+    const updateIncident = (req, res, next) => {
 
+
+
+    };
 
     return {
         createIncident  : createIncident,

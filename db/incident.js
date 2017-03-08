@@ -6,7 +6,7 @@ const pool = new pg.Pool(config.pg);
 
 module.exports = {
 
-    createIncident: (user_id, incident_name, desc, cat_id, location,
+    createIncident: (user_id, title, desc, cat_id, location,
                      start_date, end_date, frequency, keywords, custom_fields,
                      callback) => {
         pool.connect((err, client, done) => {
@@ -15,9 +15,9 @@ module.exports = {
             if (err) {
                 callback(err);
             } else {
-                client.query('SELECT create_incident($1::int, $2::int, $3::jsonb, $4::jsonb,' +
+                client.query('SELECT create_incident($1::int, $2::jsonb, $3::jsonb, $4::int,' +
                     ' $5::jsonb, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb, $10::jsonb);',
-                    [user_id, cat_id, desc, incident_name, location,
+                    [user_id, title, desc, cat_id, location,
                         start_date, end_date, frequency, keywords, custom_fields],
                     (err, result) => {
                         callback(err, result);
@@ -96,7 +96,26 @@ module.exports = {
                 );
             }
         });
-    }
+    },
+    updateIncident:  (title, desc, cat_id, location, end_date, frequency, keywords, custom_fields,
+                      callback) => {
+        pool.connect((err, client, done) => {
+            done(); // release back to pool
+
+            if (err) {
+                callback(err);
+            } else {
+                client.query('SELECT create_incident($1::int, $2::jsonb, $3::jsonb, $4::int,' +
+                    ' $5::jsonb, $6::jsonb, $7::jsonb, $8::jsonb, $9::jsonb, $10::jsonb);',
+                    [user_id, title, desc, cat_id, location,
+                        start_date, end_date, frequency, keywords, custom_fields],
+                    (err, result) => {
+                        callback(err, result);
+                    }
+                );
+            }
+        });
+    },
     //
     // return {
     //     createIncident  : createIncident,

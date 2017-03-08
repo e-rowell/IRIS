@@ -72,10 +72,9 @@ module.exports = (passport) => {
     const loginFacebook = (req, res) => {
         req.session.user = {};
 
-        if (req.query.lat && req.query.long) {
+        if (req.query.location) {
 
-            req.session.user.lat = req.query.lat;
-            req.session.user.long = req.query.long;
+            req.session.user.location = req.query.location;
 
             return passport.authenticate('facebook', {
                 scope         : ['email'],
@@ -119,10 +118,9 @@ module.exports = (passport) => {
     const loginTwitter = (req, res, next) => {
         req.session.user = {};
 
-        if (req.query.lat && req.query.long) {
+        if (req.query.location) {
 
-            req.session.user.lat = req.query.lat;
-            req.session.user.long = req.query.long;
+            req.session.user.location = req.query.location;
 
             return passport.authenticate('twitter')(req, res, next);
         } else {
