@@ -24,10 +24,5 @@ module.exports = {
     validField: (json) => {
         return (json.id && json.title && json.data && json.type); // && json.mandatory);
     }
-    // return {
-    //     incident: incident,
-    //     report: report,
-    //     user: user
-    // };
 
 };

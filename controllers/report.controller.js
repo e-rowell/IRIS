@@ -1,13 +1,7 @@
-const config = require("../config");
-const jwt = require('jsonwebtoken');
-
-// Postgres config
-const pg = require('pg');
-
 const db = require('../db/db');
+const converter = require('jstoxml');
 
-
-module.exports = (passport) => {
+module.exports = () => {
     'use strict';
 
     // POST /api/incidents/:incident_id/reports
@@ -52,7 +46,12 @@ module.exports = (passport) => {
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json(result.rows[0]);
+                if (req.query.format && req.query.format === 'xml') {
+                    res.set('Content-Type', 'text/xml');
+                    return res.status(200).send(converter.toXML(result.rows[0], 'reports', 'report'));
+                } else {
+                    return res.status(200).json(result.rows[0]);
+                }
             } else {
                 return res.status(404).json({ message: 'Nothing found.' });
             }
@@ -62,11 +61,6 @@ module.exports = (passport) => {
     // GET /api/incidents/:incident_id/reports
     const getAllReportsForIncident = (req, res, next) => {
 
-        // if (req.params.id || req.params.report_id) {
-        //     next();
-        //     return;
-        // }
-
         db.report.getAllReportsForIncident({ limit: req.query.limit, offset: req.query.offset },
             req.params.incident_id, (err, result) => {
             if (err) {
@@ -75,7 +69,12 @@ module.exports = (passport) => {
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json(result.rows);
+                if (req.query.format && req.query.format === 'xml') {
+                    res.set('Content-Type', 'text/xml');
+                    return res.status(200).send(converter.toXML(result.rows, 'reports', 'report'));
+                } else {
+                    return res.status(200).json(result.rows);
+                }
             } else {
                 return res.status(404).json({ message: 'Nothing found.' });
             }
@@ -97,7 +96,12 @@ module.exports = (passport) => {
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json(result.rows[0]);
+                if (req.query.format && req.query.format === 'xml') {
+                    res.set('Content-Type', 'text/xml');
+                    return res.status(200).send(converter.toXML(result.rows[0], 'reports', 'report'));
+                } else {
+                    return res.status(200).json(result.rows[0]);
+                }
             } else {
                 return res.status(404);
             }
@@ -119,12 +123,16 @@ module.exports = (passport) => {
                 });
             }
             if (result.rowCount) {
-                return res.status(200).json(result.rows);
+                if (req.query.format && req.query.format === 'xml') {
+                    res.set('Content-Type', 'text/xml');
+                    return res.status(200).send(converter.toXML(result.rows, 'reports', 'report'));
+                } else {
+                    return res.status(200).json(result.rows);
+                }
             } else {
                 return res.status(404).json({ message: 'Nothing found.' });
             }
         });
-
     };
 
 

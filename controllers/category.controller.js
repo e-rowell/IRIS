@@ -1,8 +1,7 @@
-const config = require("../config");
-const pg = require('pg');
 const db = require('../db/db');
+const converter = require('jstoxml');
 
-module.exports = (passport) => {
+module.exports = () => {
     'use strict';
 
     // POST /api/categories
@@ -16,7 +15,6 @@ module.exports = (passport) => {
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
-
             res.status(201).json({ location: '/api/categories/' + result.rows[0]['create_category'] });
         });
     };
@@ -29,8 +27,12 @@ module.exports = (passport) => {
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
-
-            res.status(200).json(result.rows);
+            if (req.query.format && req.query.format === 'xml') {
+                res.set('Content-Type', 'text/xml');
+                return res.status(200).send(converter.toXML(result.rows, 'categories', 'category'));
+            } else {
+                return res.status(200).json(result.rows);
+            }
         });
     };
 
@@ -46,8 +48,12 @@ module.exports = (passport) => {
                     error: (process.env.NODE_ENV == 'development') ? err : 'Something went wrong.'
                 });
             }
-
-            res.status(200).json(result.rows);
+            if (req.query.format && req.query.format === 'xml') {
+                res.set('Content-Type', 'text/xml');
+                return res.status(200).send(converter.toXML(result.rows, 'categories', 'category'));
+            } else {
+                return res.status(200).json(result.rows);
+            }
         });
     };
 

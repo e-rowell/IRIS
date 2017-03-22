@@ -1,0 +1,62 @@
+.table {
+    display: table;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    min-height: .01%;
+    overflow-x: auto;
+}
+
+.material-icons.red500 {
+    color: #F44336;
+}
+
+.material-icons.green500 {
+    color: #4CAF50;
+}
+
+.material-icons.blue500 {
+    color: #2196F3;
+}
+
+.md-tooltip-parent {
+    position: relative;
+    z-index: 1;
+}
+
+.nav-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.fade-img-right {
+    position: relative;
+    z-index: -1;
+    display: block;
+}
+
+.nav-link:hover {
+    background: #ececec;
+}
+
+.gsapify-router-in-setup {
+    display: none;
+}
+
+.hide-tab-bar > md-tabs-wrapper {
+    display: none;
+}
+
+.fade-in {
+    transition: .5s linear all;
+    opacity: 1;
+}
+
+.fade-in.ng-hide {
+    opacity: 0;
+}

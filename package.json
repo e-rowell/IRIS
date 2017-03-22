@@ -5,17 +5,20 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "doc": "apidoc -f routes.js -o apidoc/"
   },
   "author": "Ethan Rowell",
   "license": "ISC",
   "dependencies": {
+    "angular": "^1.6.3",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "express": "~4.14.0",
     "express-session": "^1.14.2",
     "express-winston": "^2.2.0",
     "jsonwebtoken": "^7.2.1",
+    "jstoxml": "^0.2.4",
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",

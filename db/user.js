@@ -32,7 +32,7 @@ module.exports = {
             if (err) {
                 callback(err);
             } else {
-                client.query('SELECT user_id FROM public."user" WHERE "email" = $1::text;', [email],
+                client.query('SELECT user_id, email, default_location, credibility, created FROM public."user" WHERE "email" = $1::text;', [email],
                     (err, result) => {
                         callback(err, result);
                     }
@@ -48,8 +48,8 @@ module.exports = {
             if (err) {
                 callback(err);
             } else {
-                client.query('SELECT user_id, default_location, credibility, created ' +
-                    'FROM public."user" WHERE email = $1::int;', [id],
+                client.query('SELECT user_id, email, default_location, credibility, created ' +
+                    'FROM public."user" WHERE user_id = $1::int;', [id],
                     (err, result) => {
                         callback(err, result);
                     }

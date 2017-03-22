@@ -3,6 +3,9 @@ const config = require("./config");
 const express = require('express');
 const passport = require('passport');
 
+const path = require("path"),
+    root = path.join(__dirname, "./");
+
 
 const cookieParser = require('cookie-parser');
 //const passportFile = require('./config/passport')(passport);
@@ -29,8 +32,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
+// allow angular files to be served
+app.use(express.static(path.join(__dirname, 'client')));
+app.use(express.static(path.join(__dirname, 'apidoc')));
+
 // configure routes
 const routes = require('./routes')(passport);
+
+
 
 // app.use((req, res, next) => {
 //     logger.info(new Date(), req.method, req.url);
@@ -40,7 +49,24 @@ const routes = require('./routes')(passport);
 const logger = require("./utils/logger");
 app.use(logger);
 
+
 app.use(routes);
+
+
+// send angular page
+console.log(root);
+
+app.use('/api/api_data.json', (req, res) => {
+    res.sendFile('apidoc/api_data.json', { root : root });
+});
+
+app.use('/apidoc', (req, res) => {
+    res.sendFile('apidoc/index.html', { root: root });
+});
+
+app.use('/', (req, res) => {
+    res.sendFile('client/index.html', { root: root });
+});
 
 app.use(logger.errorLogger);
 

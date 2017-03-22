@@ -17,7 +17,7 @@ module.exports = (passport) => {
 
     // GET /auth/google
     /*
-     query params required: lat, long
+     query params required: location
      */
     const loginGoogle = (req, res) => {
         req.session.user = {};
@@ -174,11 +174,8 @@ module.exports = (passport) => {
         }
     };
 
-    const jwtAuth = (req, res, next) => {
-        return passport.authenticate('jwt', { session: false })(req, res, next);
-    };
 
-// route middleware to make sure the user is logged in
+    // route middleware to make sure the user is logged in
     const isLoggedIn = (req, res, next) => {
 
         if (req.isAuthenticated()) {
@@ -202,7 +199,7 @@ module.exports = (passport) => {
         loginGoogle          : loginGoogle,
         loginGoogleCallback  : loginGoogleCallback,
         isLoggedIn           : isLoggedIn,
-        jwtAuth              : jwtAuth,
+        refreshToken         : refreshToken,
         logout               : logout,
         home                 : home,
         loginGoogleSuccess   : loginGoogleSuccess,

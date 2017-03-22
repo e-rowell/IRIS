@@ -1,0 +1,48 @@
+<md-toolbar layout="row" class="md-whiteframe-z2">
+    <div class="md-toolbar-tools">
+        <h1> Incident Response In Situ (I.R.I.S.) Application </h1>
+        <span flex></span>
+        <md-button class="md-fab md-fab-top-right md-accent md-whiteframe-z2"
+                   style="position: relative; top: 30px;">
+            <ng-md-icon icon="download"></ng-md-icon>
+        </md-button>
+    </div>
+</md-toolbar>
+<div flex layout="row">
+
+    <!--<md-sidenav layout="column" class="md-sidenav-left md-whiteframe-4dp" md-component-id="left"-->
+                <!--md-is-locked-open="vm">-->
+        <!--<md-sidemenu>-->
+            <!--<md-sidemenu-group>-->
+                <!--<md-sidemenu-button ui-sref="apiDoc" href="#">-->
+                    <!--<div class="inset">-->
+                        <!--<ng-md-icon icon="database"></ng-md-icon>-->
+                    <!--</div>-->
+                    <!--<div class="inset">Data</div>-->
+                <!--</md-sidemenu-button>-->
+
+            <!--</md-sidemenu-group>-->
+
+            <!--<md-sidemenu-group>-->
+                <!--<md-subheader class="md-no-sticky">API Documentation</md-subheader>-->
+
+                <!--<div ng-repeat="category in vm.apiData.groups" layout layout-fill flex>-->
+                    <!--<md-sidemenu-content md-heading="{{ category.title }}" md-arrow="true">-->
+                        <!--<div ng-repeat="route in category" layout layout-fill flex>-->
+                            <!--<md-sidemenu-button href="#">-->
+                                <!--{{ route.title }}-->
+                            <!--</md-sidemenu-button>-->
+                        <!--</div>-->
+                    <!--</md-sidemenu-content>-->
+                <!--</div>-->
+            <!--</md-sidemenu-group>-->
+        <!--</md-sidemenu>-->
+
+    <!--</md-sidenav>-->
+
+    <md-content flex id="content" style="background-color: #c7c7c7;">
+        <div style=" " layout="column" layout-align="center center"
+             id="main" ui-view class="gsapify-router">
+        </div>
+    </md-content>
+</div>

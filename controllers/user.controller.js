@@ -1,6 +1,5 @@
-const config = require("../config");
-
 const db = require('../db/db');
+const converter = require('jstoxml');
 
 module.exports = (passport) => {
     'use strict';
@@ -9,11 +8,11 @@ module.exports = (passport) => {
     const createUser = (req, res, next) => {
         console.log(req.body);
 
-        if (!req.body.source_id || !req.body.email || !req.body.default_lat || !req.body.default_long) {
+        if (!req.body.provider || !req.body.email || !req.body.location) {
             return res.status(422).json({ error: 'Missing parameters.' });
         }
 
-        db.user.createUser(req.body.source_id, req.body.email, req.body.default_lat, req.body.default_long,
+        db.user.createUser(req.body.provider, req.body.email, req.body.location,
             (err, result) => {
 
                 if (err) {
@@ -26,16 +25,21 @@ module.exports = (passport) => {
             });
     };
 
-    // GET /api/user/id:
-    const getUser = (req, res, next) => {
+    // GET /api/user/:id
+    const getUserById = (req, res, next) => {
 
         passport.authenticate('jwt', (req, res) => {
             if (req.params.id) {
-                db.user.getUserById(req.params.id, (err, result) => {
+                db.user.getUserById(req.params.user_id, (err, result) => {
                     if (err) {
                         throw err;
                     } else if (result.length > 0) {
-                        return res.status(200).json({ user: result[0] });
+                        if (req.query.format && req.query.format === 'xml') {
+                            res.set('Content-Type', 'text/xml');
+                            return res.status(200).send(converter.toXML(result.rows[0], 'users', 'user'));
+                        } else {
+                            return res.status(200).json({ user: result.rows[0] });
+                        }
                     } else {
                         return res.status(404);
                     }
@@ -48,8 +52,8 @@ module.exports = (passport) => {
 
 
     return {
-        createUser: createUser,
-        getUser   : getUser
+        createUser : createUser,
+        getUserById: getUserById
     }
 
 };

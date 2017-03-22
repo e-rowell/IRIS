@@ -1,0 +1,65 @@
+<div>
+    <md-card style="display: table;" id="dataCard" layout="column" layout-align="center center">
+        <md-card-title style="padding-bottom: 0px;">
+            <md-card-title-text>
+                <span class="md-headline">Data Download</span>
+            </md-card-title-text>
+            <span flex></span>
+            <!--<md-input-container style="margin: 0;">
+                <md-select ng-model="vm.requestFilter" id="filterBy" placeholder="Filter By:">
+                    <md-option value="Name">Name</md-option>
+                    <md-option value="Approval">Approval</md-option>
+                    <md-option value="Approved Amount">Approved Amount</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container style="margin: 0;">
+                <label for="searchText">Search</label>
+                <input id="searchText" type="text" />
+            </md-input-container>-->
+
+            <md-input-container style="margin: 0; padding: 10px;">
+                <md-checkbox ng-model="vm.includeReports">Include Reports</md-checkbox>
+            </md-input-container>
+
+        </md-card-title>
+        <div>
+            <div layout layout-fill>
+                <!--<md-button class="md-raised" ng-click="vm.test()">-->
+                <!--TEST-->
+                <!--</md-button>-->
+                <span flex></span>
+            </div>
+
+            <md-table-container>
+                <table md-table md-auto-select md-on-select="vm.selectedRequest" ng-model="vm.selected"
+                       md-progress="vm.dataPromise" class="table table-responsive">
+                    <thead md-head md-order="vm.query.order">
+                    <tr md-row>
+                        <th md-column md-desc md-order-by="created">Created</th>
+                        <th md-column md-order-by="date">Category</th>
+                        <th md-column>Title</th>
+                        <th md-column>Description</th>
+                        <th md-column>Start Date</th>
+                        <th md-column>End Date</th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row md-select="request" md-select-id="requestId" md-auto-select ng-repeat="incident in vm.incidents | orderBy: vm.query.order |
+					 limitTo: vm.query.limit: (vm.query.page - 1) * vm.query.limit track by $index">
+                        <td md-cell>{{ incident.created | date: 'MM/dd/yyyy' }}</td>
+                        <td md-cell>{{ incident.cat_id }}</td>
+                        <td md-cell>{{ incident.title.data }}</td>
+                        <td md-cell>{{ incident.desc.data }}</td>
+                        <td md-cell>{{ incident.start_date.data | date: 'MM/dd/yyyy' }}</td>
+                        <td md-cell>{{ incident.end_date.data | date: 'MM/dd/yyyy' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+
+            <md-table-pagination md-limit="vm.query.limit" md-limit-options="[10, 25, 50]" md-page="vm.query.page"
+                                 md-total="{{vm.incidents.length}}"
+                                 md-page-select></md-table-pagination>
+        </div>
+    </md-card>
+</div>

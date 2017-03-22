@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+    <title>IRIS API Data</title>
+
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-ui-router-anim-in-out/css/anim-in-out.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material-icons/angular-material-icons.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material-data-table/dist/md-data-table.min.css"/>
+    <link rel="stylesheet" href="bower_components/angular-material-sidemenu/dest/angular-material-sidemenu.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body ng-app="iris">
+
+<div layout-fill>
+    <iris-nav layout="column" layout-fill></iris-nav>
+</div>
+
+
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-ui-router-anim-in-out/anim-in-out.js"></script>
+<script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-messages/angular-messages.js"></script>
+<script src="bower_components/angular-material/angular-material.js"></script>
+<script src="bower_components/angular-material-icons/angular-material-icons.js"></script>
+<script src="bower_components/angular-material-data-table/dist/md-data-table.js"></script>
+<script src="bower_components/gsap/src/uncompressed/TweenMax.js"></script>
+<script src="bower_components/angular-gsapify-router/angular-gsapify-router.js"></script>
+<script src="bower_components/angular-material-sidemenu/dest/angular-material-sidemenu.js"></script>
+
+
+<script src="src/iris.module.js"></script>
+<script src="src/iris.routing.js"></script>
+<script src="src/components/nav/nav.module.js"></script>
+<script src="src/components/nav/nav.component.js"></script>
+<script src="src/components/apiDoc/apiDoc.module.js"></script>
+<script src="src/components/apiDoc/apiDoc.component.js"></script>
+<script src="src/components/data/data.module.js"></script>
+<script src="src/components/data/data.component.js"></script>
+<script src="src/services/services.module.js"></script>
+<script src="src/services/api.service.js"></script>
+</body>
+</html>

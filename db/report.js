@@ -87,9 +87,18 @@ module.exports = {
                 callback(err);
             } else {
                 let params = [];
-                let query = 'SELECT * FROM public.report WHERE incident_id = $1::int';
+
+                let query = '';
                 params.push(incident_id);
                 if (filters) {
+                    if (filters.dev)
+                        query = 'SELECT * FROM public.report WHERE incident_id = $1::int';
+                    else
+                        query = `SELECT report_id, incident_id, user-id, created,
+                                 "desc"::jsonb->>'data', location::jsonb->>'data',
+                                 custom_fields
+                                 FROM public.report 
+                                 WHERE incident_id = $1::int`;
                     if (filters.limit) {
                         query += ' LIMIT $2';
                         params.push(filters.limit);
@@ -101,10 +110,6 @@ module.exports = {
                 }
 
                 query += " ORDER BY created DESC;";
-
-                // if (filters) query += 'WHERE ';
-                // if (filters.start_before) query += '';
-                // if (filters.start_after) query += '';
 
                 client.query(query, params,
                     (err, result) => {
