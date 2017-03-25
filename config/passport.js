@@ -17,7 +17,7 @@ module.exports = (passport) => {
 
     passport.serializeUser((user, done) => {
 
-        console.log(`Serializ user: ${user}`);
+        console.log(`Serialize user: ${user}`);
         console.log(user);
         done(null, user);
     });
@@ -69,11 +69,12 @@ module.exports = (passport) => {
 
 
     passport.use(new TwitterStrategy({
-        consumerKey: 'v7COLKOEyUzLwBn00MWovdJwh',
-        consumerSecret: 'cH5RVrSYkYx40fKFkJdHNFOLr3UHQLX76ZhzOxI5XMZ4wIc8Z0',
-        callbackURL: 'http://127.0.0.1:8082/auth/twitter/callback',
+        consumerKey: config.oauth.twitter.consumer_key,
+        consumerSecret: config.oauth.twitter.consumer_secret,
+        callbackURL: config.oauth.twitter.callback_url,
         passReqToCallback: true,
-        userProfileURL: "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
+        includeEmail: true
+        // userProfileURL: "https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true"
     }, verifyCallback));
 
 

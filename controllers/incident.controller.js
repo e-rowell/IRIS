@@ -10,14 +10,14 @@ module.exports = () => {
     const createIncident = (req, res, next) => {
 
         // TODO: user_id should be pulled from JWT
-        if (!req.body.user_id || !req.body.title || !req.body.desc || !req.body.cat_id ||
+        if (!req.user.sub || !req.body.title || !req.body.desc || !req.body.cat_id ||
             !req.body.location || !req.body.start_date || !req.body.end_date || !req.body.freq ||
             !req.body.keywords) {
             return res.status(422).json({ error: 'Missing required parameters.' });
         }
 
         // ensure parameters meet the json format
-        if (!req.body.user_id  || !req.body.cat_id || !db.validField(req.body.title) ||
+        if (!db.validField(req.body.title) ||
             !db.validField(req.body.desc) || !db.validField(req.body.location) ||
             !db.validField(req.body.start_date) || !db.validField(req.body.end_date) ||
             !db.validField(req.body.freq) || !db.validField(req.body.keywords)) {
@@ -111,7 +111,7 @@ module.exports = () => {
         });
     };
 
-    // PATCH /api/incidents/:incident_id
+    // POST /api/incidents/:incident_id
     const updateIncident = (req, res, next) => {
 
         // if (!req.body.title || !req.body.desc || !req.body.cat_id ||
@@ -119,6 +119,15 @@ module.exports = () => {
         //     !req.body.keywords) {
         //     return res.status(422).json({ error: 'Missing required parameters.' });
         // }
+        if ( (req.body.title && !db.validField(req.body.title)) ||
+            (req.body.desc && !db.validField(req.body.desc)) ||
+            (req.body.location && !db.validField(req.body.location)) ||
+            (req.body.start_date && !db.validField(req.body.start_date)) ||
+            (req.body.end_date && !db.validField(req.body.end_date)) ||
+            (req.body.freq && !db.validField(req.body.freq)) ||
+            (req.body.keywords && !db.validField(req.body.keywords)) ) {
+            return res.status(422).json({ error: 'The parameters are not structured correctly.' });
+        }
 
         db.incident.updateIncident(req.params.incident_id, req.body.title, req.body.desc, req.body.cat_id,
             req.body.location, req.body.start_date, req.body.end_date, req.body.freq,

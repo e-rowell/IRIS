@@ -9,6 +9,7 @@ module.exports = (passport) => {
     const incidentCtrl = require('./controllers/incident.controller')(passport);
     const reportCtrl = require('./controllers/report.controller')(passport);
     const categoryCtrl = require('./controllers/category.controller')(passport);
+    const dataCtrl = require('./controllers/data.controller')();
 
     /**
      * @api {POST} /api/users Create User
@@ -335,12 +336,6 @@ module.exports = (passport) => {
      *              {
      *                  "location": "/api/incidents/123"
      *              }
-     * @apiErrorExample {JSON} Missing-Parameters:
-     *
-     *              HTTP/1.1 422 Unprocessable Entity
-     *              {
-     *                  "error": "Missing required parameters."
-     *              }
      * @apiErrorExample {JSON} Incorrect-Parameter-Structure:
      *
      *              HTTP/1.1 422 Unprocessable Entity
@@ -516,6 +511,12 @@ module.exports = (passport) => {
      * @apiVersion 0.1.0
      */
     router.route('/api/categories/:cat_id').get(categoryCtrl.getCategories);
+
+
+
+
+
+    router.route('/data/incidents').get(dataCtrl.getAllIncidents);
 
 
     router.route('/logout').get(loginCtrl.logout);

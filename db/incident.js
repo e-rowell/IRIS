@@ -1,3 +1,5 @@
+'use strict';
+
 const config = require("../config");
 
 // Postgres config
@@ -34,7 +36,7 @@ module.exports = {
             if (err) {
                 callback(err);
             } else {
-                var query;
+                let query;
                 if (options.dev)
                     query = 'SELECT * FROM public.incident WHERE incident_id = $1::int;';
                 else
@@ -152,16 +154,17 @@ module.exports = {
             if (err) {
                 callback(err);
             } else {
-                var query = 'UPDATE public.incident SET ';
+                let query = 'UPDATE public.incident SET ';
 
-                if (title) query += `title = ${title},`;
+                if (title) query += `title = '${JSON.stringify(title)}'::jsonb,`;
+                if (desc) query += `"desc" = '${JSON.stringify(desc)}',`;
                 if (cat_id) query += `cat_id = ${cat_id},`;
-                if (location) query += `location = ${location},`;
-                if (start_date) query += `end_date = ${start_date},`;
-                if (end_date) query += `end_date = ${end_date},`;
-                if (frequency) query += `frequency = ${frequency},`;
-                if (keywords) query += `keywords = ${keywords},`;
-                if (custom_fields) query += `custom_fields = ${custom_fields},`;
+                if (location) query += `location = '${JSON.stringify(location)}'::jsonb,`;
+                if (start_date) query += `start_date = '${JSON.stringify(start_date)}'::jsonb,`;
+                if (end_date) query += `end_date = '${JSON.stringify(end_date)}'::jsonb,`;
+                if (frequency) query += `frequency = '${JSON.stringify(frequency)}'::jsonb,`;
+                if (keywords) query += `keywords = '${JSON.stringify(keywords)}'::jsonb,`;
+                if (custom_fields) query += `custom_fields = '${JSON.stringify(custom_fields)}'::jsonb,`;
 
                 query = query.substr(0, query.length - 1); // remove last comma
 

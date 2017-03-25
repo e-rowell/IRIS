@@ -13,7 +13,7 @@
             'ngMaterial', 'ngAnimate', 'ngMessages', 'ngMdIcons', 'hj.gsapifyRouter', 'anim-in-out',
             'md.data.table'
         ])
-        .config(function Config($mdThemingProvider, ngMdIconServiceProvider, $locationProvider) {
+        .config(function Config($mdThemingProvider, ngMdIconServiceProvider, $locationProvider, $httpProvider) {
             $mdThemingProvider
                 .theme('default')
                 .primaryPalette('blue-grey', {

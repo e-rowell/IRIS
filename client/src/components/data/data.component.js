@@ -5,15 +5,18 @@
         .module('iris.data')
         .component('irisData', {
             templateUrl: 'src/components/data/data.template.html',
-            controller: ['apiService', '$q', DataController],
+            controller: ['apiService', '$q', '$http', '$window', DataController],
             controllerAs: 'vm'
         });
 
-    DataController.$inject = ['apiService', '$q'];
+    DataController.$inject = ['apiService', '$q', '$http', '$window'];
 
 
-    function DataController(apiService, $q) {
+    function DataController(apiService, $q, $http, $window) {
         var vm = this;
+
+        vm.includeReports = false;
+        vm.dataFormat = 'JSON';
 
         vm.query = {
             order: '-requestId',
@@ -34,7 +37,17 @@
             }, function (error) {
                 deferred.reject();
             })
-        }
+        };
+
+        vm.download = function () {
+            $window.location.href = '/data/incidents?format=' + vm.dataFormat.toLowerCase();
+            // $http.get('http://localhost:8083/data/incidents').
+            //     then(function (response) {
+            //         console.log('in data download response');
+            // }, function (error) {
+            //     console.log('in data download error');
+            // });
+        };
 
         ////////////////
 

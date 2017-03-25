@@ -1,3 +1,5 @@
+'use strict';
+
 const http = require('http');
 const config = require("./config");
 const express = require('express');
@@ -8,19 +10,33 @@ const path = require("path"),
 
 
 const cookieParser = require('cookie-parser');
-//const passportFile = require('./config/passport')(passport);
 
 process.env.NODE_ENV = 'development';
+
 
 // express config
 const app = express();
 app.set("title", "IRIS");
 
+
 // body-parser config
 const bp = require('body-parser');
 app.use(bp.json());
 app.use(bp.urlencoded({ extended: false }));
-//app.use(cookieParser());
+
+
+const allowedOrigins = ['http://localhost:8083', 'http://iris-app.westus.cloudapp.azure.com'];
+const allowCrossDomain = function(req, res, next) {
+
+    let origin = req.headers.origin;
+    if (allowedOrigins.indexOf(origin) > -1) {
+        res.header('Access-Control-Allow-Origin', origin);
+    }
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With Content-Type, Accept, Authorization");
+    next();
+};
+app.use(allowCrossDomain);
+
 
 app.use(require('express-session')({
     secret: config['session-secret'],
@@ -28,23 +44,20 @@ app.use(require('express-session')({
     saveUninitialized: false
 }));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 require('./config/passport')(passport);
 
-// allow angular files to be served
+
+// allow angular and apidoc files to be served
 app.use(express.static(path.join(__dirname, 'client')));
 app.use(express.static(path.join(__dirname, 'apidoc')));
+
 
 // configure routes
 const routes = require('./routes')(passport);
 
-
-
-// app.use((req, res, next) => {
-//     logger.info(new Date(), req.method, req.url);
-//     next();
-// });
 
 const logger = require("./utils/logger");
 app.use(logger);
@@ -52,9 +65,6 @@ app.use(logger);
 
 app.use(routes);
 
-
-// send angular page
-console.log(root);
 
 app.use('/api/api_data.json', (req, res) => {
     res.sendFile('apidoc/api_data.json', { root : root });

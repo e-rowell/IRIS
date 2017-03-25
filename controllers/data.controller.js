@@ -1,6 +1,7 @@
 const db = require('../db/db');
 const converter = require('jstoxml');
 const xmlConverter = require('../utils/toXml');
+const Archiver = require('archiver');
 
 module.exports = () => {
     'use strict';
@@ -16,11 +17,21 @@ module.exports = () => {
                 });
             }
             if (result.rowCount) {
+                res.writeHead(200, {
+                    'Content-Type': 'application/zip',
+                    'Content-disposition': 'attachment; filename=data.zip'
+                });
+                let zip = Archiver('zip');
+                zip.pipe(res);
+
                 if (req.query.format && req.query.format === 'xml') {
-                    res.set('Content-Type', 'text/xml');
-                    return res.status(200).send(xmlConverter.toXml(result.rows, 'incidents', 'incident'));
+
+                    zip.append(xmlConverter.toXml(JSON.stringify(result.rows), 'incidents', 'incident'),
+                        { name: 'data.xml' });
+                    zip.finalize();
                 } else {
-                    return res.status(200).json(result.rows);
+                    zip.append(JSON.stringify(result.rows), { name: 'data.json' });
+                    zip.finalize();
                 }
             } else {
                 return res.status(404).json({ message: 'Nothing found.' });
@@ -36,9 +47,6 @@ module.exports = () => {
     };
 
     return {
-        createIncident  : createIncident,
-        getIncident     : getIncident,
-        getUserIncidents: getUserIncidents,
         getAllIncidents : getAllIncidents
     }
 
